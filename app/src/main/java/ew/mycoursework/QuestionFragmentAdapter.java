@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 public class QuestionFragmentAdapter extends FragmentStatePagerAdapter{
     private Test test;
 
-    public static final String NAME = "name";
+    public static final String NAME = "QuestionName";
     public static final String QUESTIONS = "q";
     public static final String RIGHT = "right";
 
@@ -24,7 +24,7 @@ public class QuestionFragmentAdapter extends FragmentStatePagerAdapter{
     public Fragment getItem(int position) {
         QuestionFragment qf = new QuestionFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(NAME, test.getName());
+        bundle.putString(NAME, test.getQuestions().get(position).getText());
         bundle.putStringArray(QUESTIONS, test.getQuestions().get(position).getAnswers());
         bundle.putInt(RIGHT, test.getQuestions().get(position).getRightAnswer());
         qf.setArguments(bundle);

@@ -7,10 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -50,18 +48,18 @@ public class QuestionFragment extends Fragment {
         buttons.add(a1);
         buttons.add(a2);
         buttons.add(a3);
-        Button finish = v.findViewById(R.id.finisher);
-        finish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (buttons.get(correct - 1).isChecked()){
-                    Toast.makeText(getActivity(), "Correct", Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    Toast.makeText(getActivity(), "Uncorrect", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+//        Button finish = v.findViewById(R.id.finisher);
+//        finish.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (buttons.get(correct - 1).isChecked()){
+//                    Toast.makeText(getActivity(), "Correct", Toast.LENGTH_SHORT).show();
+//                }
+//                else{
+//                    Toast.makeText(getActivity(), "Uncorrect", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
         return v;
     }
 }
