@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "478724955514",
+    "firebase_url": "https://mycoursework-1506c.firebaseio.com",
+    "project_id": "mycoursework-1506c",
+    "storage_bucket": "mycoursework-1506c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478724955514:android:dd9f1db6bd13a893",
+        "android_client_info": {
+          "package_name": "ew.mycoursework"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "478724955514-5bfs64hnt90h4sdr1sqo3ulf2n8gepu4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ew.mycoursework",
+            "certificate_hash": "4bb0c9b4127704d964873d0de3337a384cabe8f7"
+          }
+        },
+        {
+          "client_id": "478724955514-o1b2ci93a8mkgsn2ch51hd2gjhaf3jr3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqF6T_oyAk4b9igjNGhixbbB9j5xK0ULM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "478724955514-o1b2ci93a8mkgsn2ch51hd2gjhaf3jr3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

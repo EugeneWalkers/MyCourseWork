@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">MyCourseWork</string>
+    <string name="login_input_text">Email</string>
+    <string name="password_input_text">Password</string>
+    <string name="sign_in">Sign in</string>
+    <string name="name">Name</string>
+    <string name="type">Type</string>
+    <string name="register_button">Register</string>
+    <string name="register">Register</string>
+    <string name="profile">Profile</string>
+    <string name="tests">Tests</string>
+    <string name="prev">Prev</string>
+    <string name="next">Next</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="finish">Finish</string>
+</resources>
