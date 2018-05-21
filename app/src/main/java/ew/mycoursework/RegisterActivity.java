@@ -32,15 +32,42 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String sLogin = login.getText().toString();
                 if (isLoginValid(sLogin) && !isUserExists(sLogin)){
-                    addUser(new User(name.getText().toString(), sLogin, password.getText().toString(), "testeduser"));
-                    Toast.makeText(RegisterActivity.this, "Succesfully registered!", Toast.LENGTH_SHORT).show();
-                    finish();
+                    if (login.getText().toString().equals("")
+                            || password.getText().toString().equals("")
+                            || name.getText().toString().equals("")){
+                        Toast.makeText(
+                                RegisterActivity.this,
+                                "Some field is empty!",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                    }
+                    else{
+                        addUser(
+                                new User(name.getText().toString(),
+                                        sLogin, password.getText().toString(),
+                                        "testeduser")
+                        );
+                        Toast.makeText(
+                                RegisterActivity.this,
+                                "Succesfully registered!",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                        finish();
+                    }
                 }
                 else if (!isLoginValid(sLogin)){
-                    Toast.makeText(RegisterActivity.this, "Error! Incorrect email!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(
+                            RegisterActivity.this,
+                            "Error! Incorrect email!",
+                            Toast.LENGTH_SHORT
+                    ).show();
                 }
                 else{
-                    Toast.makeText(RegisterActivity.this, "Error! The user is already exists.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(
+                            RegisterActivity.this,
+                            "Error! The user is already exists.",
+                            Toast.LENGTH_SHORT
+                    ).show();
                 }
             }
         });
@@ -50,7 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-    private boolean isLoginValid(String login){
+    private boolean isLoginValid(@NonNull String login){
         return login.contains("@");
     }
 
@@ -66,6 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     @NonNull
     private String[] getLoginsDatabase(){
+
         return null;
     }
 }

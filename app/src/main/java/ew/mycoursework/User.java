@@ -43,4 +43,11 @@ public class User {
         this.name = name;
         this.type = type;
     }
+
+    User(String[] data){
+        this.login = data[0];
+        this.password = data[1];
+        this.name = data[2];
+        this.type = data[3];
+    }
 }

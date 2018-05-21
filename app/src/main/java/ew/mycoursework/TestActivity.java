@@ -6,47 +6,66 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 
 public class TestActivity extends AppCompatActivity {
 
-    QuestionFragment questionFragment;
     QuestionFragmentAdapter questionFragmentAdapter;
     ViewPager pager;
+
+    private Test test = null;
+    double resultOfTest = 0;
+    String[] questions;
+    String name;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
-        Intent intent = getIntent();
-        String name = intent.getStringExtra(MainActivity.TEST);
-        Test test = getTest(name);
         Toolbar toolbar = findViewById(R.id.toolbar_test);
         TextView nameView = toolbar.findViewById(R.id.name_test);
+        setPager();
         nameView.setText(name);
-        pager = findViewById(R.id.pager);
-        questionFragmentAdapter = new QuestionFragmentAdapter(getSupportFragmentManager());
-        questionFragmentAdapter.setTest(test);
-        pager.setAdapter(questionFragmentAdapter);
-//        Button finisher = pager.findViewById(R.id.finisher);
-//        finisher.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
+        Button finisher = findViewById(R.id.finisher);
+        finisher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                QuestionFragment fragment;
+                for (int i=0; i<questions.length; i++){
+                    fragment = (QuestionFragment) questionFragmentAdapter.instantiateItem(pager, i);
+                    int right = Integer.parseInt(questions[i].split(":")[5]);
+                    if (fragment.buttons.get(right).isChecked()){
+                        resultOfTest++;
+                    }
+                }
+
+                resultOfTest /= (double)questions.length;
+                saveResultsOfTheTest();
+                Intent result = new Intent();
+                result.putExtra(MainActivity.RESULT, String.valueOf(resultOfTest));
+                result.putExtra(MainActivity.TEST_NAME, name);
+                setResult(MainActivity.REQUEST_OK, result);
+                finish();
+            }
+        });
 
     }
 
-    private Test getTest(String name) {
-        ArrayList<Question> questions = new ArrayList<>();
-        String[] answers0 = {"wq1", "rq", "wq2", "wq3"};
-        questions.add(new Question("Q0", answers0, 2));
-        String[] answers1 = {"rq", "wq1", "wq2", "wq3"};
-        questions.add(new Question("Q1", answers1, 1));
-        Test test = new Test(name, questions);
-        return test;
+    private void setPager(){
+        Intent intent = getIntent();
+        questions = intent.getStringArrayExtra(MainActivity.QUESTIONS);
+        name = intent.getStringExtra(MainActivity.NAME);
+        pager = findViewById(R.id.pager);
+        questionFragmentAdapter = new QuestionFragmentAdapter(getSupportFragmentManager());
+        questionFragmentAdapter.setQuestions(questions);
+        questionFragmentAdapter.setCount(questions.length);
+        pager.setAdapter(questionFragmentAdapter);
+    }
+
+    private void saveResultsOfTheTest() {
+
     }
 }

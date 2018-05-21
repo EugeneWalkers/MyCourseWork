@@ -3,37 +3,48 @@ package ew.mycoursework;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 
-public class QuestionFragmentAdapter extends FragmentStatePagerAdapter{
-    private Test test;
+public class QuestionFragmentAdapter extends FragmentPagerAdapter {
 
-    public static final String NAME = "QuestionName";
-    public static final String QUESTIONS = "q";
+    public static final String NAME = "questionName";
+    public static final String QUESTIONS = "questions";
     public static final String RIGHT = "right";
+    public static final String NUMBER = "number";
+    public static final String COUNT = "count";
+
+    public void setQuestions(String[] questions) {
+        this.questions = questions;
+    }
+
+    String[] questions;
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    private int count = 0;
 
     QuestionFragmentAdapter(FragmentManager fm) {
         super(fm);
-    }
 
-    public void setTest(Test test){
-        this.test = test;
     }
 
     @Override
     public Fragment getItem(int position) {
         QuestionFragment qf = new QuestionFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(NAME, test.getQuestions().get(position).getText());
-        bundle.putStringArray(QUESTIONS, test.getQuestions().get(position).getAnswers());
-        bundle.putInt(RIGHT, test.getQuestions().get(position).getRightAnswer());
+        String notParcedQuestion = questions[position];
+        String[] myQuestion = notParcedQuestion.split(":");
+        bundle.putStringArray(QUESTIONS, myQuestion);
+        bundle.putInt(NUMBER, position);
         qf.setArguments(bundle);
         return qf;
     }
 
     @Override
     public int getCount() {
-        return test.getQuestions().size();
+        return count;
     }
 }
 

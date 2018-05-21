@@ -22,4 +22,10 @@ public class Question {
         this.answers = answers;
         this.rightAnswer = rightAnswer;
     }
+    Question(String[] textToParce){
+        this.text = textToParce[0];
+        this.rightAnswer = Integer.parseInt(textToParce[textToParce.length - 1]);
+        answers = new String[textToParce.length - 2];
+        System.arraycopy(textToParce, 1, answers, 1, textToParce.length - 2);
+    }
 }

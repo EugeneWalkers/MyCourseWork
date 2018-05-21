@@ -11,33 +11,30 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
 
     private final String LOGIN_TAG = "login";
     private final String PASSWORD_TAG = "password";
+
     String login;
     String password;
-    File listOfUsers;
+    String TAG = "UserAccessor";
+    private FirebaseFirestore db;
+    private int number;
+    StringBuilder loginB = new StringBuilder("");
+    StringBuilder passwordB = new StringBuilder("");
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        //TODO: delete this block on release
-        ((EditText) findViewById(R.id.login_input)).setText("lol@");
-        ((EditText) findViewById(R.id.password_input)).setText("pass");
-
-        try {
-            listOfUsers = File.createTempFile("users", "txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Button loginButton = findViewById(R.id.login_button);
+        final Button loginButton = findViewById(R.id.login_button);
         TextView registerButton = findViewById(R.id.register_button_login);
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,27 +53,55 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 login = ((EditText) findViewById(R.id.login_input)).getText().toString();
                 password = ((EditText) findViewById(R.id.password_input)).getText().toString();
-
                 if (isLoginValid(login)) {
-                    boolean isExist = false;
-                    ArrayList<User> users = getListOfUsers();
-                    for (int i = 0; i < users.size(); i++) {
-                        if (users.get(i).getLogin().equals(login)
-                                && users.get(i).getPassword().equals(password)) {
-                            Intent goToMain = new Intent(LoginActivity.this, MainActivity.class);
-                            goToMain.putExtra(MainActivity.LOGIN, login);
-                            goToMain.putExtra(MainActivity.PASSWORD, password);
-                            goToMain.putExtra(MainActivity.NAME, users.get(i).getName());
-                            goToMain.putExtra(MainActivity.TYPE, users.get(i).getType());
-                            isExist = true;
-                            startActivity(goToMain);
-                            finish();
-                            break;
+                    db = FirebaseFirestore.getInstance();
+                    DocumentReference ref1 = db.collection("users").document("metadata");
+                    ref1.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    number = Integer.parseInt(document.get("number").toString());
+                                    DocumentReference ref2;
+
+                                    for (int i = 0; i < number; i++) {
+                                        ref2 = db.collection("users").document("user" + i);
+                                        ref2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                boolean isExist = false;
+                                                if (task.isSuccessful()) {
+                                                    DocumentSnapshot document = task.getResult();
+                                                    if (document.exists()) {
+                                                        loginB.append(document.get("login").toString());
+                                                        passwordB.append(document.get("password").toString());
+
+                                                        if (login.equals(loginB.toString()) && password.equals(passwordB.toString())) {
+                                                            Intent goToMain = new Intent(LoginActivity.this, MainActivity.class);
+                                                            goToMain.putExtra(MainActivity.LOGIN, login);
+                                                            goToMain.putExtra(MainActivity.PASSWORD, password);
+                                                            goToMain.putExtra(MainActivity.NAME, document.get("name").toString());
+                                                            goToMain.putExtra(MainActivity.TYPE, document.get("type").toString());
+                                                            String notParcedResults = document.get("tests").toString();
+                                                            String[] results = notParcedResults.substring(1, notParcedResults.length() - 1).split(", ");
+                                                            goToMain.putExtra(MainActivity.RESULTS, results);
+                                                            startActivity(goToMain);
+                                                            finish();
+                                                        }
+                                                        loginB.delete(0, loginB.length());
+                                                        passwordB.delete(0, passwordB.length());
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+
                         }
-                    }
-                    if (!isExist){
-                        Toast.makeText(LoginActivity.this, "User doesn't exist!", Toast.LENGTH_SHORT).show();
-                    }
+                    });
+
 
                 } else {
                     Toast.makeText(LoginActivity.this, "Not valid login!", Toast.LENGTH_SHORT).show();
@@ -87,45 +112,5 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isLoginValid(@NonNull String login) {
         return login.contains("@");
-    }
-
-    @NonNull
-    private ArrayList<User> getListOfUsers() {
-//        final StorageReference mStrorageRef = FirebaseStorage.getInstance().getReference();
-//        StorageReference existedUsers = mStrorageRef.child("/users/existedusers");
-//        existedUsers.getFile(listOfUsers).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-//            @Override
-//            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-//                try {
-//                    BufferedReader readerListOfUsers = new BufferedReader(new FileReader(listOfUsers));
-//                    StringBuilder readingLine = new StringBuilder("");
-//                    while(!readingLine.append(readerListOfUsers.readLine()).toString().equals("null")){
-//                        if (readingLine.toString().equals(login)){
-//                            readingLine.delete(0, readingLine.length());
-//                            StorageReference mapOfUsers = mStrorageRef.child("/users/existedusers/Map/users");
-//                            File map = File.createTempFile("map", "txt");
-//                            BufferedReader mapReader = new BufferedReader(new FileReader(map));
-//                            while(!readingLine.append(mapReader.readLine()).toString().equals("null")){
-//
-//                            }
-//                        }
-//                        readingLine.delete(0, readingLine.length());
-//                    }
-//                } catch (FileNotFoundException e) {
-//                    e.printStackTrace();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                Toast.makeText(LoginActivity.this, "Unknown Error", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-        ArrayList<User> users = new ArrayList<>();
-        users.add(new User("lol@", "pass", "trololo", "testeduser"));
-        return users;
     }
 }

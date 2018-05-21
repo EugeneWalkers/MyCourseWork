@@ -1,5 +1,7 @@
 package ew.mycoursework;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 
 public class Test {
@@ -17,5 +19,15 @@ public class Test {
     Test(String name, ArrayList<Question> questions){
         this.name = name;
         this.questions = questions;
+    }
+
+    Test (@NonNull String name,@NonNull String[] questions){
+        this.name = name;
+        this.questions = new ArrayList<>();
+        for (String q:questions){
+            String[] question = q.split(", ");
+            this.questions.add(new Question(question));
+        }
+
     }
 }
