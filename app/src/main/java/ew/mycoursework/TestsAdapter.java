@@ -3,6 +3,7 @@ package ew.mycoursework;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,16 +22,23 @@ import java.util.Map;
 
 public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> {
     private String[] dataSource;
-    private static String testName;
 
+    Bundle userData;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView textView;
-        int count;
+        private String testName;
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference reference = db.collection("tests");
         DocumentReference ref;
         String TAG = "TestAccessor";
+
+        public void setUserData(Bundle userData) {
+            this.userData = userData;
+        }
+
+        Bundle userData;
+
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -55,7 +63,8 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> 
                                     Map<String, Object> notParsedTest = document.getData();
                                     String notParcedQuestions = notParsedTest.get("questions").toString();
                                     String[] questions = notParcedQuestions.substring(1, notParcedQuestions.length() - 1).split(", ");
-                                    intent.putExtra(MainActivity.TEST, testName);
+                                    //String name = notParsedTest.get("name").toString();
+                                    intent.putExtra(MainActivity.TEST_NAME, testName);
                                     intent.putExtra(MainActivity.QUESTIONS, questions);
                                     start(context, intent);
                                 } else {
@@ -72,14 +81,15 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> 
 
         }
 
-        void start(Context context, Intent intent){
-
+        void start(Context context, Intent intent) {
+            intent.putExtra(MainActivity.USER_BUNDLE, userData);
             ((Activity) context).startActivityForResult(intent, MainActivity.REQUEST_RESULT);
         }
     }
 
-    TestsAdapter(String[] dataArgs) {
+    TestsAdapter(String[] dataArgs, Bundle userdata) {
         dataSource = dataArgs;
+        this.userData = userdata;
     }
 
     @NonNull
@@ -87,6 +97,7 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> 
     public TestsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = new TextView(parent.getContext());
         ViewHolder viewHolder = new ViewHolder(view);
+        viewHolder.setUserData(userData);
         return viewHolder;
     }
 

@@ -10,11 +10,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 public class RegisterActivity extends AppCompatActivity {
 
     private final String LOGIN_TAG = "login";
     private final String PASSWORD_TAG = "password";
     private EditText name, login, password;
+    private FirebaseFirestore db;
+    private DocumentReference ref;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,8 +43,9 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String sLogin = login.getText().toString();
-                if (isLoginValid(sLogin) && !isUserExists(sLogin)){
-                    if (login.getText().toString().equals("")
+                if (isLoginValid(sLogin)){
+                    if (
+                            login.getText().toString().equals("")
                             || password.getText().toString().equals("")
                             || name.getText().toString().equals("")){
                         Toast.makeText(
@@ -42,17 +55,41 @@ public class RegisterActivity extends AppCompatActivity {
                         ).show();
                     }
                     else{
-                        addUser(
-                                new User(name.getText().toString(),
-                                        sLogin, password.getText().toString(),
-                                        "testeduser")
-                        );
-                        Toast.makeText(
-                                RegisterActivity.this,
-                                "Succesfully registered!",
-                                Toast.LENGTH_SHORT
-                        ).show();
-                        finish();
+
+                        db = FirebaseFirestore.getInstance();
+                        ref = db.collection("users").document("metadata");
+                        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()){
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()){
+                                        ArrayList<String> users = new ArrayList<>();
+                                        users = (ArrayList<String>)document.get("users");
+                                        boolean isExist = false;
+                                        for (int i=0; i<users.size(); i++){
+                                            if (users.get(i).equals(login)){
+                                                isExist = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!isExist){
+                                            String id = "user" + users.size();
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("login", login.getText().toString());
+                                            map.put("password", password.getText().toString());
+                                            map.put("name", name.getText().toString());
+                                            map.put("type", "testeduser");
+                                            db.collection("users").document(id).set(map);
+                                            users.add(login.getText().toString());
+                                            db.collection("users").document("metadata").update("users", users);
+                                            db.collection("users").document("metadata").update("number", users.size());
+                                            finish();
+                                        }
+                                    }
+                                }
+                            }
+                        });
                     }
                 }
                 else if (!isLoginValid(sLogin)){
@@ -62,38 +99,11 @@ public class RegisterActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT
                     ).show();
                 }
-                else{
-                    Toast.makeText(
-                            RegisterActivity.this,
-                            "Error! The user is already exists.",
-                            Toast.LENGTH_SHORT
-                    ).show();
-                }
             }
         });
     }
 
-    private void addUser(User newUser){
-
-    }
-
     private boolean isLoginValid(@NonNull String login){
         return login.contains("@");
-    }
-
-    private boolean isUserExists(@NonNull String login){
-        String[] logins = getLoginsDatabase();
-        for (String login1 : logins) {
-            if (login1.equals(login)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @NonNull
-    private String[] getLoginsDatabase(){
-
-        return null;
     }
 }

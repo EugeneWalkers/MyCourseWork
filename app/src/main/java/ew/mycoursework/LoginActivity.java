@@ -17,6 +17,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+
 public class LoginActivity extends AppCompatActivity {
 
     private final String LOGIN_TAG = "login";
@@ -24,7 +26,6 @@ public class LoginActivity extends AppCompatActivity {
 
     String login;
     String password;
-    String TAG = "UserAccessor";
     private FirebaseFirestore db;
     private int number;
     StringBuilder loginB = new StringBuilder("");
@@ -67,6 +68,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                     for (int i = 0; i < number; i++) {
                                         ref2 = db.collection("users").document("user" + i);
+                                        final int finalI = i;
                                         ref2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -83,9 +85,12 @@ public class LoginActivity extends AppCompatActivity {
                                                             goToMain.putExtra(MainActivity.PASSWORD, password);
                                                             goToMain.putExtra(MainActivity.NAME, document.get("name").toString());
                                                             goToMain.putExtra(MainActivity.TYPE, document.get("type").toString());
-                                                            String notParcedResults = document.get("tests").toString();
-                                                            String[] results = notParcedResults.substring(1, notParcedResults.length() - 1).split(", ");
-                                                            goToMain.putExtra(MainActivity.RESULTS, results);
+                                                            goToMain.putExtra(MainActivity.ID, "user" + finalI);
+                                                            if (document.contains("results")){
+
+                                                                ArrayList<String> results = (ArrayList<String>)document.get("results");
+                                                                goToMain.putExtra(MainActivity.RESULTS, results);
+                                                            }
                                                             startActivity(goToMain);
                                                             finish();
                                                         }

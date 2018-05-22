@@ -43,6 +43,11 @@ public class QuestionFragmentAdapter extends FragmentPagerAdapter {
     }
 
     @Override
+    public CharSequence getPageTitle(int position) {
+        return "Question " + position;
+    }
+
+    @Override
     public int getCount() {
         return count;
     }

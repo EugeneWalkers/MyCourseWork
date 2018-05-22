@@ -20,18 +20,22 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+
+    public static final String ID = "id";
     public static final String NAME = "name";
     public static final String PASSWORD = "password";
     public static final String LOGIN = "login";
     public static final String TYPE = "type";
-    public static final String TESTS = "tests";
-    public static final String TEST = "test";
     public static final String RESULT = "result";
     public static final String TEST_NAME = "test_name";
     public static final String QUESTIONS = "questions";
     public static final String RESULTS = "results";
+    public static final String USER_BUNDLE = "user_bundle";
+
 
     public static final int REQUEST_OK = 1;
     public static final int REQUEST_RESULT = 2;
@@ -43,7 +47,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     TestsFragment tests;
     int selectedItem;
     User user;
-    String[] testsArray;
+
+    Bundle profileBundle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,20 +56,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         setNameAndType();
         setNavigationView();
-        testsArray = getTests();
         profile = new ProfileFragment();
         tests = new TestsFragment();
         fManager = getSupportFragmentManager();
         fTrans = fManager.beginTransaction();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setToggle(toolbar);
-        Bundle profileBundle = new Bundle();
+        profileBundle = new Bundle();
+        profileBundle.putString(LOGIN, user.getLogin());
+        profileBundle.putString(PASSWORD, user.getPassword());
         profileBundle.putString(NAME, user.getName());
         profileBundle.putString(TYPE, user.getType());
+        profileBundle.putString(ID, user.getId());
+        profileBundle.putStringArrayList(RESULTS, user.getResults());
         profile.setArguments(profileBundle);
-        Bundle testsBundle = new Bundle();
-        testsBundle.putStringArray(TESTS, testsArray);
-        tests.setArguments(testsBundle);
         if (savedInstanceState == null){
             fTrans.add(R.id.content_frame, profile);
             fTrans.commit();
@@ -86,7 +91,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String password = intent.getStringExtra(PASSWORD);
         String name = intent.getStringExtra(NAME);
         String type = intent.getStringExtra(TYPE);
-        user = new User(login, password, name, type);
+        String id = intent.getStringExtra(ID);
+        ArrayList<String> results;
+        if (intent.hasExtra(RESULTS)){
+            results = intent.getStringArrayListExtra(RESULTS);
+        }
+        else{
+            results = new ArrayList<>();
+        }
+        user = new User(login, password, name, type, id, results);
     }
 
     private void setNavigationView(){
@@ -107,14 +120,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Bundle bundle = new Bundle();
                 bundle.putString(NAME, user.getName());
                 bundle.putString(TYPE, user.getType());
+                bundle.putString(ID, user.getId());
                 profile.setArguments(bundle);
                 fTrans.add(R.id.content_frame, profile);
                 toolbar.setTitle(getResources().getString(R.string.profile));
                 break;
             case R.id.item_2:
-                Bundle testsBundle = new Bundle();
-                testsBundle.putStringArray(TESTS, testsArray);
-                tests.setArguments(testsBundle);
+                tests.setArguments(profileBundle);
                 fTrans.add(R.id.content_frame, tests);
                 toolbar.setTitle(getResources().getString(R.string.tests));
                 break;
@@ -135,11 +147,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragmentClass = ProfileFragment.class;
                 bundle.putString(NAME, user.getName());
                 bundle.putString(TYPE, user.getType());
+                bundle.putString(ID, user.getId());
                 break;
 
             case R.id.item_2:
+                bundle = profileBundle;
                 fragmentClass = TestsFragment.class;
-                bundle.putStringArray(TESTS, testsArray);
+
                 break;
 
             case R.id.item_3:
@@ -171,29 +185,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    private String[] getTests(){
-        String[] testsArray = {
-                "Programming",
-                "English",
-                "Math",
-                "Russian",
-                "France",
-                "Programming1",
-                "Programming2",
-                "Programming3",
-                "Programming4",
-                "Programming5",
-                "Programming6",
-                "Programming7",
-                "Programming8",
-                "Programming9",
-                "Programming10",
-                "Programming11",
-                "Programming12",
-        };
-        return testsArray;
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -201,6 +192,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
            switch (requestCode){
                case REQUEST_RESULT:
                    result = data.getStringExtra(RESULT);
+                   user.setResults(data.getStringArrayListExtra(RESULTS));
+                   profileBundle.remove(RESULTS);
+                   profileBundle.putStringArrayList(RESULTS, user.getResults());
                    Log.i(RESULT, String.valueOf(result));
                    Toast.makeText(this, "Your result: " + Double.valueOf(result)*100 + "%", Toast.LENGTH_SHORT).show();
                    break;

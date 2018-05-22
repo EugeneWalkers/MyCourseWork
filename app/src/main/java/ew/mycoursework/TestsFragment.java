@@ -26,13 +26,14 @@ public class TestsFragment extends Fragment {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference reference = db.collection("tests");
     DocumentReference ref;
-    RecyclerView.Adapter mAdapter;
     String TAG = "TestAccessor";
+    RecyclerView.Adapter mAdapter;
+    Bundle userdata;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        userdata = getArguments();
     }
 
     @Nullable
@@ -40,7 +41,7 @@ public class TestsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_tests, container, false);
         final RecyclerView mRecyclerView = v.findViewById(R.id.recycler);
-        mRecyclerView.setHasFixedSize(true);
+//        mRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager;
         mLayoutManager = new LinearLayoutManager(this.getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -48,22 +49,16 @@ public class TestsFragment extends Fragment {
         ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                Log.i(TAG, "Hello from onComplete!");
                 if (task.isSuccessful()) {
-                    Log.i(TAG, "Task is successful!");
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         Log.i(TAG, "Document exists!");
                         Map<String, Object> notParsedTest = document.getData();
                         String arrayOfTests = notParsedTest.get("tests-array").toString();
                         myDataset  = arrayOfTests.substring(1, arrayOfTests.length() - 1).split(", ");
-                        mAdapter = new TestsAdapter(myDataset);
+                        mAdapter = new TestsAdapter(myDataset, userdata);
                         mRecyclerView.setAdapter(mAdapter);
-                    } else {
-                        Log.i(TAG, "No such document");
                     }
-                } else {
-                    Log.i(TAG, "get failed with ", task.getException());
                 }
             }
         });
