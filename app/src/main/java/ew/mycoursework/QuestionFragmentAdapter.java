@@ -7,11 +7,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class QuestionFragmentAdapter extends FragmentPagerAdapter {
 
-    public static final String NAME = "questionName";
     public static final String QUESTIONS = "questions";
-    public static final String RIGHT = "right";
     public static final String NUMBER = "number";
-    public static final String COUNT = "count";
 
     public void setQuestions(String[] questions) {
         this.questions = questions;
