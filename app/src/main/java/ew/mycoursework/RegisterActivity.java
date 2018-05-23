@@ -64,8 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 if (task.isSuccessful()){
                                     DocumentSnapshot document = task.getResult();
                                     if (document.exists()){
-                                        ArrayList<String> users = new ArrayList<>();
-                                        users = (ArrayList<String>)document.get("users");
+                                        ArrayList<String> users = (ArrayList<String>)document.get("users");
                                         boolean isExist = false;
                                         for (int i=0; i<users.size(); i++){
                                             if (users.get(i).equals(login)){

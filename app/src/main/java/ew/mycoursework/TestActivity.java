@@ -60,10 +60,12 @@ public class TestActivity extends AppCompatActivity {
         nameTest = intent.getStringExtra(MainActivity.TEST_NAME);
 
         pager = findViewById(R.id.pager);
-        questionFragmentAdapter = new QuestionFragmentAdapter(getSupportFragmentManager());
-        questionFragmentAdapter.setQuestions(questions);
-        questionFragmentAdapter.setCount(questions.length);
-        pager.setAdapter(questionFragmentAdapter);
+        if (questions.length > 0){
+            questionFragmentAdapter = new QuestionFragmentAdapter(getSupportFragmentManager());
+            questionFragmentAdapter.setQuestions(questions);
+            questionFragmentAdapter.setCount(questions.length);
+            pager.setAdapter(questionFragmentAdapter);
+        }
     }
 
     private void saveResultsOfTheTest() {
@@ -84,6 +86,12 @@ public class TestActivity extends AppCompatActivity {
         }
         user.setResults(results);
         db.collection("users").document(user.getId()).update("results", results);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finishTest();
     }
 
     private void finishTest() {

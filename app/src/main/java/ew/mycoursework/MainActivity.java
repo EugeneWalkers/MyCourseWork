@@ -32,8 +32,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final String TYPE = "type";
     public static final String RESULT = "result";
     public static final String TEST_NAME = "test_name";
+    public static final String QUESTION = "question";
+    public static final String QUESTION_NAME = "question_name";
     public static final String QUESTIONS = "questions";
     public static final String RESULTS = "results";
+    public static final String RIGHT = "right";
     public static final String USER_BUNDLE = "user_bundle";
 
 
@@ -104,6 +107,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void setNavigationView(){
         NavigationView navigationView = findViewById(R.id.nav_view);
+        if (!user.getType().equals("admin")){
+            navigationView.getMenu().getItem(2).setEnabled(false);
+        }
         View headerView = navigationView.getHeaderView(0);
         TextView navText = headerView.findViewById(R.id.header_text);
         navText.setText("Welcome, " + user.getName() + "!");
@@ -157,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.item_3:
-
+                fragmentClass = AdminPanelFragment.class;
                 break;
 
             case R.id.item_4:

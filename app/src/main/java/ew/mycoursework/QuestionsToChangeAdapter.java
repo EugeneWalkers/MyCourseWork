@@ -3,10 +3,8 @@ package ew.mycoursework;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -20,25 +18,34 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Map;
 
-public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> {
+public class QuestionsToChangeAdapter extends RecyclerView.Adapter<QuestionsToChangeAdapter.ViewHolder> {
     private String[] dataSource;
+    private String testName;
 
-    Bundle userData;
+    public String[] getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(String[] dataSource) {
+        this.dataSource = dataSource;
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView textView;
-        private String testName;
+        private String questionName;
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference reference = db.collection("tests");
         DocumentReference ref;
-        String TAG = "TestAccessor";
 
-        public void setUserData(Bundle userData) {
-            this.userData = userData;
+        public String getTestName() {
+            return testName;
         }
 
-        Bundle userData;
+        public void setTestName(String testName) {
+            this.testName = testName;
+        }
 
+        String testName;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -47,35 +54,31 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> 
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    testName = ((TextView) view).getText().toString();
+                    questionName = ((TextView) view).getText().toString();
                     ref = reference.document(testName);
                     final Context context = view.getContext();
-                    final Intent intent = new Intent().setClass(context, TestActivity.class);
+                    final Intent intent = new Intent().setClass(context, ChangeQuestion.class);
                     ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            Log.i(TAG, "Hello from onComplete!");
                             if (task.isSuccessful()) {
-                                Log.i(TAG, "Task is successful!");
                                 DocumentSnapshot document = task.getResult();
                                 if (document.exists()) {
-                                    Log.i(TAG, "Document exists!");
                                     Map<String, Object> notParsedTest = document.getData();
-                                    String[] questions = new String[0];
                                     if (notParsedTest.containsKey("questions")){
-
                                         String notParcedQuestions = notParsedTest.get("questions").toString();
-                                        questions = notParcedQuestions.substring(1, notParcedQuestions.length() - 1).split(", ");
+                                        String[] questions = notParcedQuestions.substring(1, notParcedQuestions.length() - 1).split(", ");
+                                        intent.putExtra(MainActivity.QUESTIONS, questions);
+                                        for (int i=0; i<questions.length; i++){
+                                            if (questions[i].split(":")[0].equals(questionName)){
+                                                intent.putExtra(MainActivity.QUESTION, questions[i]);
+                                                break;
+                                            }
+                                        }
                                     }
-                                    //String name = notParsedTest.get("name").toString();
                                     intent.putExtra(MainActivity.TEST_NAME, testName);
-                                    intent.putExtra(MainActivity.QUESTIONS, questions);
                                     start(context, intent);
-                                } else {
-                                    Log.i(TAG, "No such document");
                                 }
-                            } else {
-                                Log.i(TAG, "get failed with ", task.getException());
                             }
                         }
                     });
@@ -86,22 +89,22 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> 
         }
 
         void start(Context context, Intent intent) {
-            intent.putExtra(MainActivity.USER_BUNDLE, userData);
-            ((Activity) context).startActivityForResult(intent, MainActivity.REQUEST_RESULT);
+            ((Activity)context).startActivity(intent);
+            ((Activity)context).finish();
         }
     }
 
-    TestsAdapter(String[] dataArgs, Bundle userdata) {
+    QuestionsToChangeAdapter(String[] dataArgs, String testName) {
         dataSource = dataArgs;
-        this.userData = userdata;
+        this.testName = testName;
     }
 
     @NonNull
     @Override
-    public TestsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public QuestionsToChangeAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = new TextView(parent.getContext());
         ViewHolder viewHolder = new ViewHolder(view);
-        viewHolder.setUserData(userData);
+        viewHolder.setTestName(testName);
         return viewHolder;
     }
 

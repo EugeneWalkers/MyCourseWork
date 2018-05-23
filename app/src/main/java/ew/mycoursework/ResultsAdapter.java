@@ -41,7 +41,10 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
         if (results.length != 0) {
             String[] oneCard = results[position].split(":");
             holder.test.setText(oneCard[0]);
-            holder.result.setText(oneCard[1]);
+            double d = Double.valueOf(oneCard[1]);
+            d*=10000;
+            d/=(double)100;
+            holder.result.setText(d+"%");
         }
     }
 

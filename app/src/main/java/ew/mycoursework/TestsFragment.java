@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +21,10 @@ import java.util.Map;
 
 public class TestsFragment extends Fragment {
 
-    String[] myDataset = {""};
+    String[] myDataset;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference reference = db.collection("tests");
     DocumentReference ref;
-    String TAG = "TestAccessor";
     RecyclerView.Adapter mAdapter;
     Bundle userdata;
 
@@ -52,7 +50,6 @@ public class TestsFragment extends Fragment {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.i(TAG, "Document exists!");
                         Map<String, Object> notParsedTest = document.getData();
                         String arrayOfTests = notParsedTest.get("tests-array").toString();
                         myDataset  = arrayOfTests.substring(1, arrayOfTests.length() - 1).split(", ");
