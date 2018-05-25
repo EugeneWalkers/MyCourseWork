@@ -98,10 +98,14 @@ public class TestActivity extends AppCompatActivity {
         QuestionFragment fragment;
         for (int i = 0; i < questions.length; i++) {
             fragment = (QuestionFragment) questionFragmentAdapter.instantiateItem(pager, i);
-            int right = Integer.parseInt(questions[i].split(":")[5]);
-            if (fragment.buttons.get(right).isChecked()) {
-                resultOfTest++;
+            if (fragment.buttons.size() != 0){
+
+                int right = Integer.parseInt(questions[i].split(":")[5]);
+                if (fragment.buttons.get(right).isChecked()) {
+                    resultOfTest++;
+                }
             }
+
         }
 
         resultOfTest /= (double) questions.length;

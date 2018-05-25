@@ -48,7 +48,7 @@ public class AdminActivity extends AppCompatActivity {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
                                 Map<String, Object> notParsedTest = document.getData();
-                                Intent goToChangeQuestionActivity = new Intent(AdminActivity.this, ChangeQuestion.class);
+                                Intent goToChangeQuestionActivity = new Intent(AdminActivity.this, ChangeQuestionActivity.class);
                                 if (notParsedTest.containsKey("questions")){
                                     String arrayOfTests = notParsedTest.get("questions").toString();
                                     myDataset = arrayOfTests.substring(1, arrayOfTests.length() - 1).split(", ");

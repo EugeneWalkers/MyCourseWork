@@ -15,7 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ChangeQuestion extends AppCompatActivity {
+public class ChangeQuestionActivity extends AppCompatActivity {
     String question = null;
     String[] allQuestions;
     String testname;

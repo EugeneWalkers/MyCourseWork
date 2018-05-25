@@ -52,7 +52,6 @@ public class AdminPanelFragment extends Fragment {
             public void onClick(View view) {
                 final AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                 alert.setTitle("Input name");
-                alert.setMessage("Message");
 
 // Set an EditText view to get user input
                 final EditText input = new EditText(getContext());

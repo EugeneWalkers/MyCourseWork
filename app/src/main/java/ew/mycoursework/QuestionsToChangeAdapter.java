@@ -57,7 +57,7 @@ public class QuestionsToChangeAdapter extends RecyclerView.Adapter<QuestionsToCh
                     questionName = ((TextView) view).getText().toString();
                     ref = reference.document(testName);
                     final Context context = view.getContext();
-                    final Intent intent = new Intent().setClass(context, ChangeQuestion.class);
+                    final Intent intent = new Intent().setClass(context, ChangeQuestionActivity.class);
                     ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {

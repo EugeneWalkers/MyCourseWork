@@ -56,6 +56,7 @@ public class LoginActivity extends AppCompatActivity {
                 password = ((EditText) findViewById(R.id.password_input)).getText().toString();
                 if (isLoginValid(login)) {
                     db = FirebaseFirestore.getInstance();
+                    db.collection("users").document("metadata").get();
                     DocumentReference ref1 = db.collection("users").document("metadata");
                     ref1.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override

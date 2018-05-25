@@ -9,14 +9,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity">
+        <activity android:name=".LoginActivity"
+            android:label="Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity">
+        <activity android:name=".RegisterActivity"
+            android:label="Registrer">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -43,8 +45,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ChangeQuestion"
-            android:label="Change Question">
+            android:name=".ChangeQuestionActivity"
+            android:label="Change question">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
